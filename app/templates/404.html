@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="not-found-container">
+      <div class="not-found-container-sidebar">
+          <div style="font-size:100px">404</div>
+          <p>抱歉，您访问的页面不存在</p>
+          <a href="{{ url_for('index') }}">
+            <button class="btn btn-success">返回首页</button>
+          </a>
+      </div>
+      <div class="not-found-container-body">
+          <img src="../static/images/daxiong.png" width="265px" height="344px">
+      </div>
+    </div>
+</div>
+{% endblock %}

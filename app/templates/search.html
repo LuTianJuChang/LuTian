@@ -1,0 +1,51 @@
+{% extends 'base.html'%}
+{% block content %}
+{% import 'page.html' as pg %}
+{% if courses.total %}
+<div class="text-monospace" style="margin: 15px 0 0 5px;">
+    共有<span class="font-weight-bold">{{ courses.total }}</span>门包含<span class="font-weight-bold">"{{ keyword }}"</span>的课程
+</div>
+<div class="link-top"></div>
+<!-- 显示课程开始 -->
+<div class="row" style="text-align:center;">
+    {% for course in courses.items %}
+    <div class="col-sm-3" style="padding: 20px">
+        <a href="/course/{{course.product_id}}" style="text-decoration: none;color:inherit;">
+            <div class="card" style="height:280px">
+                <img src="{{course.big_img_url}}" class="card-img-top"
+                     alt="..." height="170px">
+                <div class="card-body">
+                    <p class="card-title" style="font-weight: bold;">{{course.product_name}}</p>
+                    <p class="card-text">
+                        {% if not course.original_price %}
+                        免费
+                        {% elif course.discount_rate %}
+                        ￥{{course.discount_price}}元
+                        {% else %}
+                        ￥{{course.original_price}}元
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+<!-- 显示课程结束 -->
+        <!-- 分页开始 -->
+{{ pg.page(courses) }}
+<!-- 分页结束 -->
+    {% else %}
+        <div>
+            <img src="{{url_for('static', filename='images/no_results.png')}}" width="35%">
+            <h4>暂无搜索结果</h4>
+            <p>换个词搜索试试吧</p>
+        </div>
+    {% endif %}
+<script>
+    $(".page-link").click(function(){
+        var page = $(this).data('page')
+        matchUrl('page',page);  // 生成URL
+    })
+</script>
+{% endblock %}

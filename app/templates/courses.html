@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% import 'page.html' as pg %}
+{% block content %}
+<div class="container">
+<div class="m-filter">
+    <div class="mc">
+        <dl class="item fore1">
+            <dt>分类：</dt>
+            <dd>
+                <a href="javascript:;" class="tag" data-tag="common" class="curr" >综合</a>
+                <a href="javascript:;" class="tag" data-tag="free">免费</a>
+                <a href="javascript:;" class="tag" data-tag="1-100">100元以内</a>
+                <a href="javascript:;" class="tag" data-tag="100-200">100-200元</a>
+                <a href="javascript:;" class="tag" data-tag="200-300">200-300元</a>
+                <a href="javascript:;" class="tag" data-tag="300-400">300-400元</a>
+                <a href="javascript:;" class="tag" data-tag="400-500">400-500元</a>
+                <a href="javascript:;" class="tag" data-tag="500-gt">500元以上</a>
+            </dd>
+        </dl>
+        <dl class="item fore2">
+            <dt>排序：</dt>
+            <dd>
+                <a href="javascript:;" id="score" class="order" data-order="score">评分
+                    <img src="{{url_for('static',filename='images/arrow_desc.png')}}"
+                         height="12px" width="12px" >
+                </a>
+                <a href="javascript:;" id="learner_count" class="order" data-order="learner_count">学习人数
+                    <img src="{{url_for('static',filename='images/arrow_desc.png')}}"
+                         height="12px" width="12px" >
+                </a>
+                <a href="javascript:;" id="price" class="order" data-order="price-desc">价格
+                    <img src="{{url_for('static',filename='images/arrow_order.png')}}"
+                         height="15px" width="15px" >
+                </a>
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<!-- 显示课程开始 -->
+<div class="row" style="text-align:center;">
+    {% for course in courses.items %}
+    <div class="col-sm-3" style="padding: 20px">
+        <a href="/course/{{course.product_id}}" style="text-decoration: none;color:inherit;">
+        <div class="card" style="height:280px">
+            <img src="{{course.big_img_url}}" class="card-img-top"
+                 alt="..." height="170px">
+            <div class="card-body">
+                <p class="card-title" style="font-weight: bold;">{{course.product_name}}</p>
+                <p class="card-text">
+                    {% if not course.original_price %}
+                        免费
+                    {% elif course.discount_rate %}
+                        ￥{{course.discount_price}}元
+                    {% else %}
+                        ￥{{course.original_price}}元
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+<!-- 显示课程结束 -->
+<!-- 分页开始 -->
+    {{ pg.page(courses) }}
+<!-- 分页结束 -->
+</div>
+<script>
+// 获取tag
+$(".tag").click(function(){
+   var data_tag = $(this).data("tag");
+   matchUrl('tag',data_tag);
+});
+// 获取order
+$(".order").click(function(){
+   var data_order = $(this).data('order') // 获取order 参数值
+   // 点击价格时，更给价格排序方式
+   if(data_order.indexOf("price") != -1){
+       if(data_order == "price-desc"){         // 如果降序，改为升序
+           data_order = "price-asc";
+       }else if(data_order == "price-asc"){    // 如果升序，改为降序
+           data_order = "price-desc";
+       }
+       $(this).attr('data-order',data_order)   // 修改data-order属性值
+   }
+   matchUrl('order',data_order);  // 生成URL
+});
+
+// 添加选中样式
+$(document).ready(function(){
+    // 清除原来选中的选项
+    $(".curr").removeClass("curr");
+    // 获取tag值，默认为"common"
+    var tag =  getUrlParam('tag') ? getUrlParam('tag') : "common" ;
+    // 为tag添加选中样式
+    $(".tag").each(function(){
+        if($(this).data("tag") == tag){
+            $(this).addClass("curr");
+        }
+    });
+    // 为order添加选中样式
+    var order = getUrlParam("order");
+    if (order.indexOf("price") != -1){
+        $("#price").attr("data-order",order);
+        $("#price").addClass("curr");
+    }
+    $("#"+order).addClass("curr");
+});
+
+$(".page-link").click(function(){
+    var page = $(this).data('page')
+    matchUrl('page',page);  // 生成URL
+})
+</script>
+{% endblock %}
